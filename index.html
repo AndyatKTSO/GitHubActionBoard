@@ -1,59 +1,175 @@
 <!doctype html>
 <html lang="de-CH">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light"><title>GitHub Actions Monitor</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1728">
+<title>GitHub Control Center · Actions Monitor</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#203245;background:#f2f6f9}*{box-sizing:border-box}body{margin:0}main{max-width:1250px;margin:auto;padding:28px 18px 65px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}h1{font-size:clamp(25px,3vw,36px);letter-spacing:-.035em;margin:0 0 6px}h2{font-size:18px;margin:0 0 12px}.muted{color:#607284;font-size:13px}.panel{background:white;border:1px solid #dce5eb;border-radius:15px;padding:19px;margin-top:17px;box-shadow:0 3px 14px #22334408}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.controls label{font-weight:600;font-size:12px;display:block;margin-bottom:6px}.controls input,.controls select{height:40px;padding:8px 12px;border:1px solid #b6c7d3;border-radius:9px;background:white;font:inherit;color:inherit}.controls input{width:210px}.controls select{max-width:260px}.btn{border:0;background:#176b9a;color:white;font:inherit;font-weight:650;padding:10px 15px;border-radius:9px;cursor:pointer;min-height:40px}.btn:disabled{opacity:.55;cursor:default}.btn.secondary{background:#e9f1f6;color:#23516b}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:17px 0}.stat{background:white;border:1px solid #dce5eb;border-radius:12px;padding:16px}.stat strong{display:block;font-size:28px}.stat span{color:#607284;font-size:12px}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:#556d7e;font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid #dbe5ed;padding:12px 10px;white-space:nowrap}td{border-bottom:1px solid #edf1f4;padding:12px 10px;vertical-align:top}tr:last-child td{border-bottom:0}a{color:#116791;text-decoration:none}a:hover{text-decoration:underline}.pill{display:inline-block;font-size:11px;border-radius:30px;padding:4px 8px;background:#e8eef3;color:#4c6172;font-weight:650;white-space:nowrap}.ok{background:#e2f4e9;color:#19663b}.bad{background:#fce7e7;color:#9c2b2b}.run{background:#fdf2d8;color:#80550a}.disabled{background:#eceef1;color:#707882}.notice{border-left:3px solid #176b9a;background:#f0f7fb;padding:12px 14px;border-radius:8px;margin:12px 0;font-size:13px;line-height:1.55}.error{border-left-color:#ae3434;background:#fff1f0}.small{font-size:11px;color:#677988}.nowrap{white-space:nowrap}#status{min-height:20px}details{margin-top:12px}summary{cursor:pointer;font-size:13px;color:#31556a}.hidden{display:none}@media(max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:17px 10px}.panel{padding:13px}.controls input{width:165px}}
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e7edf8;background:#0b1422;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 1100px 530px at 85% -10%,#243f6c70,transparent 70%),#0b1422}button,input,select{font:inherit}button{cursor:pointer}a{color:#82c9ff;text-decoration:none}a:hover{text-decoration:underline}.shell{max-width:1480px;margin:auto;padding:32px 24px 80px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#3f8cfc,#6a5df5);font-weight:900;font-size:25px;box-shadow:0 8px 24px #366fec36}.eyebrow{color:#8db1e8;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(25px,3vw,35px);margin:3px 0;letter-spacing:-.045em}h2{font-size:17px;margin:0 0 13px;letter-spacing:-.01em}.sub{color:#9cadc4;font-size:13px;line-height:1.55}.chips{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:25px;background:#17263c;border:1px solid #32425a;color:#b4c7de;font-size:12px}.dot{width:7px;height:7px;border-radius:50%;background:#53d8a1;display:inline-block}.panel{background:#121e30;border:1px solid #2b3c53;box-shadow:0 10px 30px #00000016;border-radius:17px;padding:20px;margin-top:20px}.gridstats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:18px}.stat{padding:19px;border:1px solid #2b3c53;border-radius:15px;background:#142135}.stat strong{font-size:32px;letter-spacing:-.045em;display:block;line-height:1.1}.stat span{color:#9daec4;font-size:12px;display:block;margin-top:7px}.stat .sicon{color:#68c5ff;font-size:12px;float:right}.controls{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:11px;color:#b7c8de;font-weight:750}.field input,.field select{border:1px solid #3a4b64;background:#0c1728;color:#eaf3ff;border-radius:10px;min-height:41px;padding:9px 11px;max-width:100%;outline:none}.field input:focus,.field select:focus{border-color:#76aff7;box-shadow:0 0 0 2px #387fd62c}.field input::placeholder{color:#788da7}.field.grow{flex:1;min-width:190px}.field.grow input{width:100%}.btn{border:1px solid transparent;border-radius:10px;padding:10px 13px;min-height:41px;font-size:12px;font-weight:750;color:#fff;background:#367ee2;white-space:nowrap}.btn:hover{filter:brightness(1.12)}.btn.secondary{background:#20324a;border-color:#40516b;color:#d4e5f7}.btn.ghost{background:transparent;border-color:#3b4c64;color:#bacde3}.btn:disabled{opacity:.45;cursor:not-allowed}.accounts{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.account{border:1px solid #36516d;background:#172b43;border-radius:11px;display:inline-flex;align-items:center;gap:9px;padding:7px 9px;font-size:13px}.account input{accent-color:#60b5ff}.account button{background:transparent;border:none;color:#e6a4a8;font-weight:800;font-size:18px;padding:0 4px}.account label{display:flex;align-items:center;gap:7px;cursor:pointer}.hint{font-size:12px;color:#92a9c4;line-height:1.5;margin:12px 0 0}.notice{padding:13px 14px;border:1px solid #3a5476;background:#142b47;color:#d4e5fa;border-radius:11px;font-size:12px;line-height:1.65;margin-top:13px}.notice.warn{background:#3b2a23;border-color:#75513b;color:#ffdabb}.muted{color:#9aacc3}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:15px}.toolbar h2{margin:0}.wrap{overflow-x:auto;border:1px solid #283c55;border-radius:13px}table{border-collapse:collapse;width:100%;font-size:12px;min-width:1070px}th{text-align:left;white-space:nowrap;text-transform:uppercase;letter-spacing:.07em;font-size:10px;color:#91a8c2;background:#17273d;padding:14px 13px}td{padding:15px 13px;border-top:1px solid #29394e;vertical-align:middle}tbody tr:hover{background:#1b2b41}td a{font-weight:700}.name{font-weight:750}.meta{font-size:11px;color:#92a6bf;margin-top:5px}.pill{display:inline-block;border-radius:30px;padding:5px 9px;background:#283c55;color:#d3e4f9;white-space:nowrap;font-size:10px;font-weight:750}.pill.ok{background:#164936;color:#a3f2c8}.pill.bad{background:#603038;color:#ffc4cc}.pill.warn{background:#674e24;color:#ffdf9b}.pill.neutral{background:#2a3a52;color:#c3d1df}.pill.purple{background:#35315f;color:#d7cfff}.linkbutton{display:inline-block;margin-top:5px;color:#88cdfa;font-size:11px}.empty{text-align:center;color:#9aadc4;padding:38px 15px}.footer{margin-top:17px;color:#8297b2;font-size:11px;line-height:1.6}.loadbar{height:3px;width:100%;background:#293b53;border-radius:8px;overflow:hidden;margin-top:12px;display:none}.loadbar.on{display:block}.loadbar:before{content:"";display:block;height:100%;background:#64b4ff;width:35%;animation:slide 1.25s ease-in-out infinite}@keyframes slide{from{transform:translateX(-110%)}to{transform:translateX(300%)}}.errorlist{display:grid;gap:7px;margin-top:12px}.erroritem{padding:10px 12px;border:1px solid #675041;background:#35281f;border-radius:9px;color:#ffe2ce;font-size:12px;overflow-wrap:anywhere}.erroritem small{display:block;color:#dec3b2;margin-top:4px}.hidden{display:none!important}input[type=file]{display:none}.right{margin-left:auto}.small{font-size:11px}.state{font-size:12px;color:#a9c1da}.sectionhead{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}.tag{color:#8398b1;font-size:11px}details summary{cursor:pointer;color:#b8d7fa;font-size:12px}details{margin-top:14px}code{color:#d5e7ff}@media(max-width:980px){.gridstats{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:600px){.shell{padding:17px 11px 50px}.panel{padding:15px}.gridstats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{padding:13px}.stat strong{font-size:26px}.btn{flex-grow:0}}
 </style>
 </head>
-<body><main>
-<header class="head"><div><h1>GitHub Actions Monitor</h1><div class="muted">Öffentliche Repositories · Workflows · Zeitpläne · letzter Lauf</div></div><a href="https://github.com/AndyatKTSO" target="_blank" rel="noopener">GitHub-Profil öffnen ↗</a></header>
-<section class="panel"><div class="controls"><div><label for="user">GitHub-Benutzername</label><input id="user" autocomplete="off" value="AndyatKTSO" spellcheck="false"></div><button class="btn" id="refresh">Jetzt aktualisieren</button><button class="btn secondary" id="export" disabled>CSV exportieren</button></div><p id="status" class="muted" role="status" aria-live="polite">Bereit zum Laden.</p><div class="small" id="updated"></div></section>
-<div class="stats"><div class="stat"><strong id="repos">–</strong><span>Öffentliche Repositories</span></div><div class="stat"><strong id="workflows">–</strong><span>Workflows</span></div><div class="stat"><strong id="scheduled">–</strong><span>Mit GitHub-Zeitplan</span></div><div class="stat"><strong id="failed">–</strong><span>Letzter Lauf fehlgeschlagen</span></div></div>
-<section class="panel"><div class="controls"><div><label for="filterRepo">Repository</label><select id="filterRepo"><option value="">Alle Repositories</option></select></div><div><label for="filterType">Art</label><select id="filterType"><option value="">Alle Workflows</option><option value="schedule">Mit GitHub-Zeitplan</option><option value="external">Ohne GitHub-Zeitplan</option><option value="failed">Letzter Lauf fehlgeschlagen</option></select></div><div><label for="search">Suchen</label><input id="search" placeholder="Repository oder Workflow"></div></div><div class="tablewrap"><table><thead><tr><th>Repository</th><th>Workflow</th><th>Auslöser / Rhythmus</th><th>Letzter Lauf</th><th>Status</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="muted">Noch keine Daten geladen.</td></tr></tbody></table></div></section>
-<section class="panel"><h2>Wichtig zu den Zeitplänen</h2><div class="notice">Ein <b>GitHub-Cron</b> wird aus der Workflow-Datei gelesen. Bei <b>«Manuell / extern möglich»</b> ist kein GitHub-Zeitplan definiert; ein externer Dienst wie cron-job.org kann die Action trotzdem regelmässig auslösen. Den externen Zeitplan kann die öffentliche GitHub-API nicht erkennen.</div><div class="muted">GitHub Pages «pages build and deployment» wird durch Veröffentlichungen ausgelöst und benötigt normalerweise keinen Cron. Diese Übersicht liest nur öffentliche Daten, ändert nichts und benötigt keinen Token. GitHub begrenzt anonyme API-Aufrufe auf üblicherweise 60 pro Stunde und IP-Adresse. Ein Ergebnis wird 15 Minuten im Browser zwischengespeichert. Zeitangaben werden in Schweizer Ortszeit angezeigt.</div><details><summary>Wie funktioniert die Übersicht technisch?</summary><p class="muted">Pro öffentlichem Repository lädt sie die Liste der Workflows und die letzten Workflow-Ausführungen über die GitHub REST API. Aus den öffentlich zugänglichen YAML-Dateien unter <code>.github/workflows</code> liest sie Cron-Angaben. Es werden keine Zugangsdaten übertragen oder gespeichert. GitHub-interne Workflows ohne eigene YAML-Datei werden separat erkannt. Bei einem API-Fehler werden unvollständige Daten ausdrücklich ausgewiesen.</p></details></section>
+<body><main class="shell">
+<header class="top"><div class="brand"><div class="logo">⌘</div><div><div class="eyebrow">Public GitHub Intelligence</div><h1>Actions Control Center</h1><div class="sub">Accounts · Repositories · Automationen · Veröffentlichungen</div></div></div><div class="chips"><span class="chip"><span class="dot"></span>Nur öffentliche GitHub-Daten</span><span class="chip">Keine Anmeldung · keine Tokens</span></div></header>
+<section class="panel"><div class="sectionhead"><h2>Accounts verwalten</h2><span class="tag">Auf diesem Gerät gespeichert</span></div><div class="controls"><div class="field grow"><label for="newUser">GitHub-Benutzername oder Organisationsname</label><input id="newUser" placeholder="Hier Deinen Account eingeben" autocomplete="off" spellcheck="false"></div><button class="btn" id="addUser">+ Account hinzufügen</button><button class="btn secondary" id="refresh">↻ Daten aktualisieren</button><button class="btn ghost" id="export">Konfiguration exportieren</button><button class="btn ghost" id="importBtn">Konfiguration importieren</button><input type="file" id="importFile" accept="application/json,.json"></div><div id="accounts" class="accounts"></div><div class="hint">Häkchen entfernen = Account aus der Übersicht ausblenden. × = Account aus der gespeicherten Auswahl löschen. Export/Import überträgt nur die Accountliste und deren Auswahl, keine GitHub-Zugangsdaten.</div><div class="loadbar" id="loading"></div><div id="status" role="status" aria-live="polite" class="hint">Bitte einen Account hinzufügen.</div><div class="tag" id="updated"></div><details id="errorDetails" class="hidden"><summary id="errorSummary">Abrufdetails</summary><div class="hint">Einzelne Einträge können bei Fehlern unvollständig sein. HTTP 403/429 weist häufig auf das API-Limit hin. Bei HTTP 404 ist die angefragte Ressource möglicherweise nicht verfügbar.</div><div id="errorList" class="errorlist"></div></details></section>
+<section class="gridstats"><div class="stat"><span class="sicon">◉</span><strong id="statAccounts">0</strong><span>Aktive Accounts</span></div><div class="stat"><span class="sicon">▤</span><strong id="statRepos">0</strong><span>Öffentliche Repositories</span></div><div class="stat"><span class="sicon">⚙</span><strong id="statWorkflows">0</strong><span>Workflows</span></div><div class="stat"><span class="sicon">◷</span><strong id="statSchedules">0</strong><span>Mit GitHub-Zeitplan</span></div><div class="stat"><span class="sicon">↗</span><strong id="statPages">0</strong><span>Repositories mit GitHub Pages</span></div></section>
+<section class="panel"><div class="toolbar"><h2>Gesamtübersicht</h2><span class="tag" id="resultCount"></span></div><div class="controls" style="margin-bottom:16px"><div class="field"><label for="filterAccount">Account</label><select id="filterAccount"><option value="">Alle Accounts</option></select></div><div class="field"><label for="filterPublication">Publikation</label><select id="filterPublication"><option value="all">Alle</option><option value="pages">GitHub Pages gemeldet</option><option value="none">Keine GitHub Pages</option><option value="unknown">Unbekannt</option></select></div><div class="field"><label for="filterType">Workflow</label><select id="filterType"><option value="all">Alle</option><option value="scheduled">Mit Zeitplan</option><option value="unscheduled">Ohne GitHub-Zeitplan</option><option value="failed">Letzter Lauf fehlgeschlagen</option><option value="noworkflow">Ohne Workflow</option></select></div><div class="field grow"><label for="search">Freitext</label><input id="search" placeholder="Account, Repository oder Action …"></div></div>
+
+<div class="wrap"><table><thead><tr><th>Account / Repository</th><th>Workflow / Action</th><th>Auslöser / Rhythmus</th><th>Letzter Lauf</th><th>Status</th><th>Veröffentlicht</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">Bitte einen GitHub-Account hinzufügen.</td></tr></tbody></table></div></section>
+<section class="panel"><h2>Hinweise zur Interpretation</h2><div class="notice">Ein GitHub-Cron wird aus öffentlich lesbaren Workflow-Dateien erkannt. <strong>«Kein GitHub-Zeitplan»</strong> bedeutet nicht zwingend «nie automatisch»: Externe Dienste wie cron-job.org können Workflows über die API starten. Der Rhythmus des externen Dienstes lässt sich daraus nicht zuverlässig ablesen. GitHub Pages wird zuerst am Repository-Merkmal <code>has_pages</code> erkannt; wenn möglich wird der offizielle Link zusätzlich abgefragt. Ein fehlender Link bedeutet nicht automatisch einen Fehler. Andere Hosting-Anbieter werden nicht automatisch erkannt.</div><details><summary>Technische Details und Grenzen anzeigen</summary><p class="sub">Die Seite nutzt die öffentliche GitHub REST API. Standardmässig können anonyme Abfragen nach etwa 60 Requests pro Stunde und IP begrenzt werden. Mehrere Accounts mit vielen Repositories können dieses Limit erreichen. Daten werden 15 Minuten lokal zwischengespeichert. Zeitangaben sind Schweizer Ortszeit. Wenn ein API-Aufruf fehlschlägt, erscheint eine Warnung statt einer erfundenen Statusmeldung. Die Seite führt keine Änderungen auf GitHub durch.</p></details><div class="footer">Nur öffentliche Repositories · Einzelne HTML-Datei · GitHub Pages oder lokal nutzbar · Browser-Speicherung über localStorage · Konfigurationsdateien enthalten nur öffentliche GitHub-Accountnamen.</div></section>
 </main><script>
 'use strict';
-const $=id=>document.getElementById(id);
-const ttl=15*60*1000;
-let model=null;
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function dateCH(v){if(!v)return '–';const d=new Date(v);return Number.isNaN(d.getTime())?'–':new Intl.DateTimeFormat('de-CH',{timeZone:'Europe/Zurich',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d);}
-function status(s){$('status').textContent=s;}
-async function getJson(url){const r=await fetch(url,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});if(!r.ok){const limit=r.status===403||r.status===429?' (möglicherweise GitHub-API-Limit erreicht)':'';throw new Error('GitHub API HTTP '+r.status+limit+' – '+url);}return r.json();}
-async function getText(url){const r=await fetch(url);if(!r.ok)throw new Error('YAML HTTP '+r.status);return r.text();}
-function extractCron(yaml){if(!yaml)return [];return [...yaml.matchAll(/^\s*-\s*cron\s*:\s*['"]?([^'"#\r\n]+)['"]?/gm)].map(m=>m[1].trim());}
-function explainCron(c){const p=c.trim().split(/\s+/);if(p.length!==5)return c;const [m,h,dom,mon,dow]=p;let x='';if(dom==='*'&&mon==='*'&&dow==='*'){if(/^\*\/\d+$/.test(m)&&h==='*')x=`Alle ${m.slice(2)} Minuten`;else if(/^\d+$/.test(m)&&/^\*\/\d+$/.test(h))x=`Alle ${h.slice(2)} Stunden, Minute ${m}`;else if(/^\d+$/.test(m)&&h==='*')x=`Stündlich, Minute ${m}`;else if(/^\d+$/.test(m)&&/^\d+$/.test(h))x=`Täglich ${h.padStart(2,'0')}:${m.padStart(2,'0')} UTC`;}return x?x+' ('+c+')':c+' (UTC, falls keine Zeitzone konfiguriert)';}
-function runState(run){if(!run)return ['–',''];if(run.status!=='completed')return ['Läuft','run'];if(run.conclusion==='success')return ['Erfolgreich','ok'];if(run.conclusion==='failure'||run.conclusion==='timed_out'||run.conclusion==='action_required')return ['Fehler','bad'];if(run.conclusion==='cancelled')return ['Abgebrochen','disabled'];return [run.conclusion||'Unbekannt','disabled'];}
-function render(){if(!model)return;const {repos,items,errors,updated}=model;$('repos').textContent=repos.length;$('workflows').textContent=items.length;$('scheduled').textContent=items.filter(x=>x.crons.length).length;$('failed').textContent=items.filter(x=>runState(x.run)[1]==='bad').length;$('updated').textContent='Datenstand: '+dateCH(updated)+(errors.length?' · Einige Daten konnten nicht geladen werden.':'');
-const selected=$('filterRepo').value;$('filterRepo').innerHTML='<option value="">Alle Repositories</option>'+repos.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');$('filterRepo').value=repos.some(r=>r.name===selected)?selected:'';
-const filter=$('filterType').value,term=$('search').value.trim().toLocaleLowerCase('de-CH');
-const shown=items.filter(x=>(!$('filterRepo').value||x.repo===$('filterRepo').value)&&(!term||(x.repo+' '+x.name).toLocaleLowerCase('de-CH').includes(term))&&(!filter||(filter==='schedule'&&x.crons.length)||(filter==='external'&&!x.crons.length)||(filter==='failed'&&runState(x.run)[1]==='bad')));
-$('rows').innerHTML=shown.length?shown.map(x=>{const [label,cls]=runState(x.run);const sched=x.crons.length?x.crons.map(c=>`<div>${esc(explainCron(c))}</div>`).join(''):x.system?'Bei GitHub-Pages-Veröffentlichung':x.yamlError?'Zeitplan nicht lesbar':'Kein GitHub-Cron';const trigger=x.crons.length?'GitHub-Zeitplan':x.system?'Systemworkflow':'Manuell / extern möglich';return `<tr><td><a href="https://github.com/${encodeURIComponent(model.user)}/${encodeURIComponent(x.repo)}" target="_blank" rel="noopener">${esc(x.repo)}</a></td><td><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.name)}</b></a><div class="small">${esc(x.state)}</div></td><td>${sched}<div class="small">${esc(trigger)}</div></td><td class="nowrap">${x.run?`<a href="${esc(x.run.html_url)}" target="_blank" rel="noopener">${esc(dateCH(x.run.created_at))}</a>`:'–'}<div class="small">${esc(x.run?.event||'')}</div></td><td><span class="pill ${cls}">${esc(label)}</span></td></tr>`;}).join(''):'<tr><td colspan="5" class="muted">Keine passenden Workflows gefunden.</td></tr>';
-if(errors.length)status('Fertig mit '+errors.length+' Hinweis(en): '+errors.slice(0,3).join(' | ')+(errors.length>3?' …':''));else status('Fertig. '+repos.length+' öffentliche Repositories geprüft.');$('export').disabled=!items.length;
+const $=id=>document.getElementById(id), API='https://api.github.com', ttl=15*60*1000, configKey='gh-actions-monitor-v3-accounts';
+const validName=/^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
+let accounts=readConfig(), data={repos:[],entries:[],errors:[],loaded:false}, busy=false, seq=0;
+function readConfig(){try{const c=JSON.parse(localStorage.getItem(configKey)||'[]');return normalise(c);}catch{return [];}}
+function normalise(input){if(!Array.isArray(input))return [];const seen=new Set(),out=[];for(const item of input.slice(0,60)){const name=String(typeof item==='string'?item:item?.name||'').trim();if(!validName.test(name)||seen.has(name.toLowerCase()))continue;seen.add(name.toLowerCase());out.push({name,enabled:typeof item==='string'||item.enabled!==false});}return out;}
+function save(){try{localStorage.setItem(configKey,JSON.stringify(accounts));return true;}catch{msg('Browser-Speicherung ist deaktiviert. Deine Auswahl bleibt eventuell nicht erhalten.');return false;}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtDate(s){if(!s)return '–';const d=new Date(s);return Number.isFinite(d.getTime())?new Intl.DateTimeFormat('de-CH',{timeZone:'Europe/Zurich',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d):'–';}
+function msg(s){$('status').textContent=s;}
+function renderAccounts(){const host=$('accounts');host.replaceChildren();accounts.forEach(ac=>{const chip=document.createElement('div');chip.className='account';const lab=document.createElement('label');const ch=document.createElement('input');ch.type='checkbox';ch.checked=ac.enabled;ch.addEventListener('change',()=>{ac.enabled=ch.checked;save();load();});const name=document.createElement('span');name.textContent=ac.name;lab.append(ch,name);const remove=document.createElement('button');remove.textContent='×';remove.title='Account entfernen';remove.setAttribute('aria-label',ac.name+' entfernen');remove.addEventListener('click',()=>{accounts=accounts.filter(a=>a!==ac);save();renderAccounts();load();});chip.append(lab,remove);host.append(chip);});if(!accounts.length)host.textContent='Noch keine Accounts hinterlegt.';}
+function addAccount(){const name=$('newUser').value.trim();if(!validName.test(name)){msg('Bitte einen gültigen GitHub-Accountnamen eingeben.');return;}if(accounts.some(a=>a.name.toLowerCase()===name.toLowerCase())){msg('Dieser Account ist bereits eingetragen.');return;}accounts.push({name,enabled:true});$('newUser').value='';save();renderAccounts();load();}
+function downloadConfig(){const blob=new Blob([JSON.stringify({format:'github-actions-monitor-accounts',version:1,accounts},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='github-actions-monitor-konfiguration.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);msg('Konfiguration exportiert.');}
+async function importConfig(file){if(!file)return;try{if(file.size>100000)throw Error('Datei ist zu gross.');const parsed=JSON.parse(await file.text());if(parsed.format!=='github-actions-monitor-accounts'||!Array.isArray(parsed.accounts))throw Error('Keine gültige Monitor-Konfiguration.');const next=normalise(parsed.accounts);if(parsed.accounts.length&&next.length===0)throw Error('Keine gültigen Accountnamen gefunden.');accounts=next;save();renderAccounts();load();}catch(e){msg('Import nicht möglich: '+e.message);}finally{$('importFile').value='';}}
+async function request(url,{allow404=false,text=false}={}){
+  let r;
+  try{r=await fetch(url,{headers:url.startsWith(API)?{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}:{}});}
+  catch(e){throw new Error('Netzwerkfehler: '+e.message);}
+  if(allow404&&r.status===404)return null;
+  if(!r.ok){
+    let detail='';try{const j=await r.json();detail=String(j.message||'').slice(0,150);}catch{}
+    const rem=r.headers.get('x-ratelimit-remaining'),reset=r.headers.get('x-ratelimit-reset');
+    const limited=(r.status===403||r.status===429)&&(rem==='0'||/rate limit/i.test(detail));
+    let when='';if(limited&&reset){const d=new Date(Number(reset)*1000);if(!isNaN(d))when='; wieder ab '+fmtDate(d.toISOString());}
+    throw new Error(`HTTP ${r.status}${limited?' – GitHub-API-Limit erreicht':detail?' – '+detail:''}${when}`);
+  }
+  try{return text?await r.text():await r.json();}catch(e){throw new Error('Antwort nicht lesbar: '+e.message);}
 }
-async function load(force=false){const user=$('user').value.trim();if(!/^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/.test(user)){status('Bitte gültigen GitHub-Benutzernamen eingeben.');return;}
-$('refresh').disabled=true;const cacheKey='gh-actions-monitor-v2-'+user.toLowerCase();try{if(!force){try{const cached=JSON.parse(localStorage.getItem(cacheKey)||'null');if(cached&&Date.now()-new Date(cached.updated).getTime()<ttl){model=cached;render();status('Daten aus dem 15-Minuten-Zwischenspeicher.');return;}}catch{}}
-status('Öffentliche Repositories werden geladen …');const repos=[];for(let page=1;page<=10;page++){const chunk=await getJson(`https://api.github.com/users/${encodeURIComponent(user)}/repos?type=owner&per_page=100&page=${page}`);repos.push(...chunk.filter(r=>!r.private).map(r=>({name:r.name,branch:r.default_branch})));if(chunk.length<100)break;}
-const items=[],errors=[];
-for(let i=0;i<repos.length;i++){
-const repo=repos[i];status(`Lese Workflows: ${i+1}/${repos.length} – ${repo.name}`);
-try{
-const base=`https://api.github.com/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo.name)}/actions`;
-const [wf,runList]=await Promise.all([getJson(base+'/workflows?per_page=100'),getJson(base+'/runs?per_page=100')]);
-const runs=new Map();for(const run of (runList.workflow_runs||[])){if(!runs.has(run.workflow_id))runs.set(run.workflow_id,run);}
-const repoItems=await Promise.all((wf.workflows||[]).map(async w=>{
-const system=!String(w.path||'').startsWith('.github/workflows/');let crons=[],yamlError=false;
-if(!system){try{const raw=`https://raw.githubusercontent.com/${encodeURIComponent(user)}/${encodeURIComponent(repo.name)}/${encodeURIComponent(repo.branch)}/${w.path.split('/').map(encodeURIComponent).join('/')}`;crons=extractCron(await getText(raw));}catch{yamlError=true;}}
-return {repo:repo.name,name:w.name,url:w.html_url||`https://github.com/${user}/${repo.name}/actions/workflows/${encodeURIComponent(w.path)}`,state:w.state||'unbekannt',crons,system,yamlError,run:runs.get(w.id)||null};
-}));items.push(...repoItems);
-if((wf.total_count||0)>100)errors.push(repo.name+': mehr als 100 Workflows, nicht alle erfasst');
-if((runList.total_count||0)>100)errors.push(repo.name+': nur 100 neueste Läufe geprüft');
-}catch(e){errors.push(repo.name+': '+e.message);}
+function cronsFromYaml(yaml){let lines=yaml.split(/\r?\n/),inSchedule=false,indent=0,out=[];for(let line of lines){if(/^\s*(?:on|"on"|'on')\s*:\s*$/.test(line)){continue;}const m=line.match(/^(\s*)schedule\s*:\s*(?:#.*)?$/);if(m){inSchedule=true;indent=m[1].length;continue;}if(inSchedule){const ci=line.match(/^(\s*)\S/);if(ci&&ci[1].length<=indent){inSchedule=false;continue;}const cron=line.match(/^\s*-?\s*cron\s*:\s*['"]?([^'"#\r\n]+)['"]?/);if(cron)out.push(cron[1].trim());}}return out;}
+function cronLabel(c){const p=c.trim().split(/\s+/);if(p.length!==5)return c;const [m,h,d,mo,w]=p;if(d==='*'&&mo==='*'&&w==='*'){if(/^\*\/\d+$/.test(m)&&h==='*')return `Alle ${m.split('/')[1]} Minuten · ${c}`;if(/^\d+$/.test(m)&&/^\*\/\d+$/.test(h))return `Alle ${h.split('/')[1]} Stunden, Minute ${m} · ${c}`;if(/^\d+$/.test(m)&&h==='*')return `Stündlich, Minute ${m} · ${c}`;if(/^\d+$/.test(m)&&/^\d+$/.test(h))return `Täglich ${h.padStart(2,'0')}:${m.padStart(2,'0')} UTC · ${c}`;}return c+' · UTC (ohne timezone-Angabe)';}
+function stateOf(run){if(!run)return {label:'Kein Lauf',cls:'neutral'};if(run.status!=='completed')return {label:'Läuft',cls:'warn'};const c=run.conclusion;if(c==='success')return {label:'Erfolgreich',cls:'ok'};if(['failure','timed_out','action_required','startup_failure'].includes(c))return {label:'Fehlgeschlagen',cls:'bad'};return {label:c==='cancelled'?'Abgebrochen':c||'Unbekannt',cls:'neutral'};}
+function cached(user){try{const v=JSON.parse(localStorage.getItem('gh-actions-v3-cache-'+user.toLowerCase())||'null');return v&&Date.now()-v.time<ttl?v:null;}catch{return null;}}
+function setCache(user,v){try{localStorage.setItem('gh-actions-v3-cache-'+user.toLowerCase(),JSON.stringify({...v,time:Date.now()}));}catch{}}
+function issue(list,area,where,e){list.push({area,where,message:e instanceof Error?e.message:String(e)});}
+async function scan(user,force,token){
+  if(!force){const c=cached(user);if(c&&Array.isArray(c.errors)&&c.errors.every(e=>typeof e==='object'))return c;}
+  const repositories=[],entries=[],errors=[];const enc=encodeURIComponent;
+  for(let page=1;page<=10;page++){
+    const list=await request(`${API}/users/${enc(user)}/repos?type=owner&per_page=100&page=${page}`);
+    if(!Array.isArray(list))throw Error('Unerwartete Repository-Antwort');
+    repositories.push(...list.filter(r=>!r.private).map(r=>({owner:r.owner.login,name:r.name,full:r.full_name,branch:r.default_branch,hasPages:!!r.has_pages,pages:r.has_pages?'yes':'no',pagesUrl:null,pagesDetail:r.has_pages?'Link noch nicht geprüft':'Nicht eingerichtet',html:r.html_url})));
+    if(list.length<100)break;
+    if(page===10)issue(errors,'Repository-Liste',user,'Mehr als 1000 Repositories – Liste gekürzt');
+  }
+  for(let i=0;i<repositories.length;i++){
+    if(token!==seq)throw Error('Veraltete Abfrage');
+    const repo=repositories[i],base=`${API}/repos/${enc(repo.owner)}/${enc(repo.name)}`;
+    msg(`${user}: ${i+1}/${repositories.length} · ${repo.name}`);
+    if(repo.hasPages){
+      try{
+        const pg=await request(base+'/pages',{allow404:true});
+        if(pg?.html_url&&/^https:\/\//.test(pg.html_url)){
+          repo.pagesUrl=pg.html_url;
+          repo.pagesDetail=pg.status==='built'?'Veröffentlicht':pg.status?'Pages: '+pg.status:'Pages-Link von GitHub';
+        }else if(pg===null){repo.pagesDetail='GitHub meldet Pages, Detailabfrage HTTP 404 – Link nicht bestätigt';}
+        else{repo.pagesDetail='GitHub meldet Pages, jedoch keinen öffentlich bestätigten Link';}
+      }catch(e){repo.pagesDetail='GitHub meldet Pages, Link nicht abrufbar';issue(errors,'GitHub Pages',repo.full,e);}
+    }
+    let workflows=[];
+    try{
+      const wf=await request(base+'/actions/workflows?per_page=100');
+      workflows=Array.isArray(wf.workflows)?wf.workflows:[];
+      if(wf.total_count>100)issue(errors,'Workflows',repo.full,'Mehr als 100 Workflows – Liste gekürzt');
+    }catch(e){issue(errors,'Workflows',repo.full,e);repo.workflowsError=true;continue;}
+    // Bewusst sequenziell: anonymes API-Limit ist niedrig.
+    for(const flow of workflows){
+      let sched=[],yamlError=false;
+      const sys=!String(flow.path||'').startsWith('.github/workflows/');
+      if(!sys){try{
+        const path=flow.path.split('/').map(enc).join('/');
+        const y=await request(`https://raw.githubusercontent.com/${enc(repo.owner)}/${enc(repo.name)}/${enc(repo.branch||'main')}/${path}`,{text:true});
+        sched=cronsFromYaml(y);
+      }catch(e){yamlError=true;issue(errors,'Workflow-Datei',repo.full+' / '+flow.name,e);}}
+      let run=null,runError=false;
+      try{const recent=await request(base+'/actions/workflows/'+flow.id+'/runs?per_page=1');run=recent.workflow_runs?.[0]||null;}
+      catch(e){runError=true;issue(errors,'Letzter Lauf',repo.full+' / '+flow.name,e);}
+      entries.push({owner:repo.owner,repo:repo.name,workflow:flow.name,id:flow.id,path:flow.path,url:flow.html_url||repo.html+'/actions',state:flow.state,scheduled:sched,system:sys,yamlError,run,runError,pages:repo.pages,pagesUrl:repo.pagesUrl});
+    }
+  }
+  const out={repositories,entries,errors};
+  if(!errors.length)setCache(user,out);
+  return out;
 }
-model={user,repos,items,errors,updated:new Date().toISOString()};try{localStorage.setItem(cacheKey,JSON.stringify(model));}catch{}render();
-}catch(e){status('Fehler: '+e.message);if(model)render();}finally{$('refresh').disabled=false;}}
-function csv(){if(!model)return;const names=['Repository','Workflow','GitHub-Cron','Rhythmus','Letzter Lauf (Schweiz)','Status','Ereignis','Workflow-Link'];const vals=model.items.map(x=>[x.repo,x.name,x.crons.join(' | '),x.crons.map(explainCron).join(' | ')||(x.system?'Bei Veröffentlichung':'Kein GitHub-Cron; extern möglich'),dateCH(x.run?.created_at),runState(x.run)[0],x.run?.event||'',x.url]);const quote=v=>'"'+String(v??'').replaceAll('"','""')+'"';const content='\ufeff'+[names,...vals].map(row=>row.map(quote).join(';')).join('\r\n');const blob=new Blob([content],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='github-actions-'+model.user+'.csv';a.click();URL.revokeObjectURL(url);}
-$('refresh').addEventListener('click',()=>load(true));$('export').addEventListener('click',csv);$('filterRepo').addEventListener('change',render);$('filterType').addEventListener('change',render);$('search').addEventListener('input',render);$('user').addEventListener('keydown',e=>{if(e.key==='Enter')load(true)});load(false);
+function optionList(id,values,all){const sel=$(id),previous=sel.value;sel.replaceChildren(new Option(all,''),...values.map(x=>new Option(x,x)));if(values.includes(previous))sel.value=previous;}
+function renderErrors(){
+  const issues=data.errors||[];
+  $('errorDetails').classList.toggle('hidden',!issues.length);
+  $('errorSummary').textContent=`${issues.length} Abrufhinweis${issues.length===1?'':'e'} anzeigen`;
+  const host=$('errorList');host.replaceChildren();
+  for(const e of issues){const item=document.createElement('div');item.className='erroritem';const main=document.createElement('strong');main.textContent=e.where||'GitHub';const minor=document.createElement('small');minor.textContent=(e.area||'API')+' · '+(e.message||'Unbekannter Fehler');item.append(main,minor);host.append(item);}
+}
+function render(){
+  const repos=data.repos,entries=data.entries;
+  $('statAccounts').textContent=data.users||0;
+  $('statRepos').textContent=repos.length;
+  $('statWorkflows').textContent=entries.length;
+  $('statSchedules').textContent=entries.filter(e=>e.scheduled.length).length;
+  $('statPages').textContent=repos.filter(r=>r.pages==='yes').length;
+  $('updated').textContent=data.loaded?'Datenstand: '+fmtDate(data.timestamp)+(data.errors.length?' · teilweise unvollständig':''):'';
+  renderErrors();
+  optionList('filterAccount',[...new Set(repos.map(r=>r.owner))].sort(),'Alle Accounts');
+  const account=$('filterAccount').value,pub=$('filterPublication').value,type=$('filterType').value,query=$('search').value.trim().toLowerCase();
+  const found=[];
+  for(const r of repos){
+    if(account&&r.owner!==account)continue;
+    if(pub==='pages'&&r.pages!=='yes')continue;
+    if(pub==='none'&&r.pages!=='no')continue;
+    if(pub==='unknown'&&r.pages!=='unknown')continue;
+    const wf=entries.filter(e=>e.owner===r.owner&&e.repo===r.name);
+    if(!wf.length){
+      if(type!=='all'&&type!=='noworkflow')continue;
+      if(!(`${r.owner} ${r.name}`).toLowerCase().includes(query))continue;
+      found.push({r,w:null});
+    }else{
+      if(type==='noworkflow')continue;
+      for(const w of wf){
+        if(type==='scheduled'&&!w.scheduled.length)continue;
+        if(type==='unscheduled'&&w.scheduled.length)continue;
+        if(type==='failed'&&stateOf(w.run).cls!=='bad')continue;
+        if(!(`${r.owner} ${r.name} ${w.workflow}`).toLowerCase().includes(query))continue;
+        found.push({r,w});
+      }
+    }
+  }
+  $('resultCount').textContent=found.length+' Zeilen';
+  const tb=$('rows');
+  if(!found.length){tb.innerHTML='<tr><td colspan="6" class="empty">'+(data.loaded?'Keine passenden Einträge gefunden.':'Bitte einen Account hinzufügen.')+'</td></tr>';return;}
+  tb.innerHTML=found.map(({r,w})=>{
+    const st=stateOf(w?.run);
+    const p=r.pages==='yes'&&r.pagesUrl
+      ?`<span class="pill ok">GitHub Pages</span><div><a class="linkbutton" href="${esc(r.pagesUrl)}" target="_blank" rel="noopener noreferrer">Website öffnen ↗</a></div>`
+      :r.pages==='yes'?`<span class="pill warn">Pages gemeldet</span><div class="meta">${esc(r.pagesDetail||'Link nicht bestätigt')}</div>`
+      :r.pages==='no'?'<span class="pill neutral">Keine GitHub Pages</span>':'<span class="pill warn">Unbekannt</span>';
+    let rhythm='–';
+    if(w){rhythm=w.scheduled.length?w.scheduled.map(c=>esc(cronLabel(c))).join('<div style="margin-top:5px"></div>'):
+      w.system?'GitHub-Systemworkflow (ereignisbasiert)':w.yamlError?'Zeitplan nicht ermittelbar':'Kein GitHub-Zeitplan';}
+    return `<tr><td><div class="meta">${esc(r.owner)}</div><a class="name" href="${esc(r.html)}" target="_blank" rel="noopener noreferrer">${esc(r.name)} ↗</a></td><td>${w?`<a href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${esc(w.workflow)} ↗</a><div class="meta">${esc(w.state||'')}</div>`:r.workflowsError?'<span class="pill warn">Workflow-Abfrage fehlgeschlagen</span>':'<span class="muted">Kein Workflow erkannt</span>'}</td><td>${rhythm}</td><td>${w?.run?`<a href="${esc(w.run.html_url)}" target="_blank" rel="noopener noreferrer">${esc(fmtDate(w.run.created_at))} ↗</a><div class="meta">${esc(w.run.event||'')}</div>`:w?.runError?'<span class="pill warn">Abruf fehlgeschlagen</span>':'–'}</td><td>${w?`<span class="pill ${st.cls}">${esc(st.label)}</span>`:'–'}</td><td>${p}</td></tr>`;
+  }).join('');
+}
+async function load(force=false){
+  const token=++seq,users=accounts.filter(a=>a.enabled).map(a=>a.name);
+  data={repos:[],entries:[],errors:[],loaded:false,users:users.length};render();
+  if(!users.length){msg('Hier Deinen Account eingeben und hinzufügen, um zu starten.');$('loading').classList.remove('on');$('refresh').disabled=false;return;}
+  $('loading').classList.add('on');$('refresh').disabled=true;
+  const repos=[],entries=[],errors=[];
+  for(let i=0;i<users.length;i++){
+    if(token!==seq)return;
+    try{msg('Account '+(i+1)+'/'+users.length+': '+users[i]);const result=await scan(users[i],force,token);repos.push(...result.repositories);entries.push(...result.entries);errors.push(...result.errors);}
+    catch(e){if(token!==seq)return;issue(errors,'Account',users[i],e);}
+  }
+  if(token!==seq)return;
+  data={repos,entries,errors,loaded:true,users:users.length,timestamp:new Date().toISOString()};render();
+  $('loading').classList.remove('on');$('refresh').disabled=false;
+  msg(errors.length?`Fertig: ${repos.length} öffentliche Repositories. ${errors.length} Abrufhinweis(e) – Details unten aufklappen.`:`Fertig: ${repos.length} öffentliche Repositories aus ${users.length} Account(s).`);
+}
+$('addUser').addEventListener('click',addAccount);$('newUser').addEventListener('keydown',e=>{if(e.key==='Enter')addAccount();});$('refresh').addEventListener('click',()=>load(true));$('export').addEventListener('click',downloadConfig);$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',e=>importConfig(e.target.files?.[0]));['filterAccount','filterPublication','filterType'].forEach(id=>$(id).addEventListener('change',render));$('search').addEventListener('input',render);renderAccounts();if(accounts.some(a=>a.enabled))load();else render();
 </script></body></html>
