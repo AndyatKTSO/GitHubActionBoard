@@ -39,29 +39,34 @@ h1{font-size:clamp(25px,3vw,32px);letter-spacing:-.035em;margin:2px 0 4px}h2{fon
 </head>
 <body><main class="shell">
 <header class="top"><div class="brand"><div class="logo">⌘</div><div><h1>GitHub Actions Monitor</h1><div class="sub">Öffentliche GitHub-Accounts, Repositories und Workflows übersichtlich im Blick.</div></div></div><div class="chips"><button type="button" class="theme-toggle" id="themeToggle" aria-label="Design wechseln">◐ <span id="themeLabel">Dunkel</span></button><span class="chip"><span class="dot"></span>Nur öffentliche GitHub-Daten</span><span class="chip">Ohne Anmeldung nutzbar · Token optional</span></div></header>
-<section class="panel"><div class="sectionhead"><h2>Accounts verwalten</h2><span class="tag">Auf diesem Gerät gespeichert</span></div><div class="controls"><div class="field grow"><label for="newUser">GitHub-Benutzername oder Organisationsname</label><input id="newUser" placeholder="Hier Deinen Account eingeben" autocomplete="off" spellcheck="false"></div><button class="btn" id="addUser">+ Account hinzufügen</button><button class="btn secondary" id="refresh">▶ Abfrage starten</button><button class="btn ghost" id="export">Konfiguration exportieren</button><button class="btn ghost" id="importBtn">Konfiguration importieren</button><button class="btn ghost" id="resetLocal" title="Gespeicherte Accountliste und Monitor-Zwischenspeicher auf diesem Gerät löschen">Lokale Daten löschen</button><input type="file" id="importFile" accept="application/json,.json"></div><div id="accounts" class="accounts"></div><div class="hint">Häkchen entfernen = Account aus der Übersicht ausblenden. × = Account aus der gespeicherten Auswahl löschen. Export/Import überträgt nur die Accountliste und deren Auswahl, keine GitHub-Zugangsdaten.</div><div id="status" role="status" aria-live="polite" class="hint">Bitte einen Account hinzufügen.</div><div class="tokenbar"><div class="field"><label for="tokenInput">Persönlicher GitHub-Token (optional) <button type="button" class="helpicon" id="tokenHelpBtn" aria-label="Informationen zum GitHub-Token" aria-expanded="false" aria-controls="tokenHelp">i</button></label><input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="Fine-grained Token hier einmalig eingeben"></div><button class="btn secondary" id="tokenSave">Token prüfen und lokal speichern</button><button class="btn ghost" id="tokenRemove">Token entfernen</button></div><div id="tokenState" class="tokencheck" role="status" aria-live="polite">Ohne Token: anonymes API-Kontingent.</div><div id="tokenHelp" class="notice tokenhelp hidden"><strong>Wozu ein Token?</strong><p>Mit einem Fine-grained Personal Access Token erkennt GitHub Deine API-Abfragen als authentifiziert. Dadurch steigt das reguläre Stundenkontingent in der Regel von 60 auf 5'000 Anfragen. Für öffentlich lesbare Daten sind keine zusätzlichen Repository-Rechte nötig. Erstelle einen eigenen Token mit möglichst wenigen Rechten (nur automatisch vorhandenes «Metadata: Read-only»), zum Beispiel eingeschränkt auf ein einzelnes Repository.</p><p>Der Token wird nur in diesem Browser gespeichert und bei API-Anfragen an <code>api.github.com</code> gesendet. <strong>Auch ein Token ohne zusätzliche Rechte ist ein Geheimnis:</strong> JavaScript derselben Website und Personen mit Zugriff auf Dein Browserprofil könnten ihn auslesen. Nur auf vertrauenswürdigen Geräten speichern. Er wird weder in die HTML-Datei noch in den Konfigurationsexport übernommen. <strong>Die Verwendung und lokale Speicherung des Tokens erfolgt auf eigenes Risiko.</strong> Bei Verdacht auf Missbrauch den Token bei GitHub widerrufen. Die API-Abfragen bleiben lesend.</p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Fine-grained Token bei GitHub erstellen ↗</a></div><div class="loadbar" id="loading"></div><div class="tag" id="budgetStatus">API-Budget: noch nicht geprüft</div><div class="tag" id="updated"></div><details id="errorDetails" class="hidden"><summary id="errorSummary">Abrufdetails</summary><div class="hint">Einzelne Einträge können bei Fehlern unvollständig sein. HTTP 403/429 weist häufig auf das API-Limit hin. Bei HTTP 404 ist die angefragte Ressource möglicherweise nicht verfügbar.</div><div id="errorList" class="errorlist"></div></details></section>
+<section class="panel"><div class="sectionhead"><h2>Accounts verwalten</h2><span class="tag">Auf diesem Gerät gespeichert</span></div><div class="controls"><div class="field grow"><label for="newUser">GitHub-Benutzername oder Organisationsname</label><input id="newUser" placeholder="Hier Deinen Account eingeben" autocomplete="off" spellcheck="false"></div><button class="btn" id="addUser">+ Account hinzufügen</button><button class="btn secondary" id="refresh">▶ Abfrage starten</button><button class="btn ghost hidden" id="cancelScan" type="button">■ Abfrage abbrechen</button><button class="btn ghost" id="export">Konfiguration exportieren</button><button class="btn ghost" id="importBtn">Konfiguration importieren</button><button class="btn ghost" id="resetLocal" title="Gespeicherte Accountliste und Monitor-Zwischenspeicher auf diesem Gerät löschen">Lokale Daten löschen</button><input type="file" id="importFile" accept="application/json,.json"></div><div id="accounts" class="accounts"></div><div class="hint">Häkchen entfernen = Account aus der Übersicht ausblenden. × = Account aus der gespeicherten Auswahl löschen. Export/Import überträgt nur die Accountliste und deren Auswahl, keine GitHub-Zugangsdaten.</div><div id="status" role="status" aria-live="polite" class="hint">Bitte einen Account hinzufügen.</div><div class="tokenbar"><div class="field"><label for="tokenInput">Persönlicher GitHub-Token (optional) <button type="button" class="helpicon" id="tokenHelpBtn" aria-label="Informationen zum GitHub-Token" aria-expanded="false" aria-controls="tokenHelp">i</button></label><input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="Fine-grained Token hier einmalig eingeben"></div><button class="btn secondary" id="tokenSave">Token prüfen und lokal speichern</button><button class="btn ghost" id="tokenRemove">Token entfernen</button></div><div id="tokenState" class="tokencheck" role="status" aria-live="polite">Ohne Token: anonymes API-Kontingent.</div><div id="tokenHelp" class="notice tokenhelp hidden"><strong>Wozu ein Token?</strong><p>Mit einem Fine-grained Personal Access Token erkennt GitHub Deine API-Abfragen als authentifiziert. Dadurch steigt das reguläre Stundenkontingent in der Regel von 60 auf 5'000 Anfragen. Für öffentlich lesbare Daten sind keine zusätzlichen Repository-Rechte nötig. Erstelle einen eigenen Token mit möglichst wenigen Rechten (nur automatisch vorhandenes «Metadata: Read-only»), zum Beispiel eingeschränkt auf ein einzelnes Repository.</p><p>Der Token wird nur in diesem Browser gespeichert und bei API-Anfragen an <code>api.github.com</code> gesendet. <strong>Auch ein Token ohne zusätzliche Rechte ist ein Geheimnis:</strong> JavaScript derselben Website und Personen mit Zugriff auf Dein Browserprofil könnten ihn auslesen. Nur auf vertrauenswürdigen Geräten speichern. Er wird weder in die HTML-Datei noch in den Konfigurationsexport übernommen. <strong>Die Verwendung und lokale Speicherung des Tokens erfolgt auf eigenes Risiko.</strong> Bei Verdacht auf Missbrauch den Token bei GitHub widerrufen. Die API-Abfragen bleiben lesend.</p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Fine-grained Token bei GitHub erstellen ↗</a></div><div class="loadbar" id="loading"></div><div class="tag" id="budgetStatus">API-Budget: noch nicht geprüft</div><div class="tag" id="updated"></div><details id="errorDetails" class="hidden"><summary id="errorSummary">Abrufdetails</summary><div class="hint">Einzelne Einträge können bei Fehlern unvollständig sein. HTTP 403/429 weist häufig auf das API-Limit hin. Bei HTTP 404 ist die angefragte Ressource möglicherweise nicht verfügbar.</div><div id="errorList" class="errorlist"></div></details></section>
 <section class="gridstats"><div class="stat"><span class="sicon">◉</span><strong id="statAccounts">0</strong><span>Aktive Accounts</span></div><div class="stat"><span class="sicon">▤</span><strong id="statRepos">0</strong><span>Öffentliche Repositories</span></div><div class="stat"><span class="sicon">⚙</span><strong id="statWorkflows">0</strong><span>Workflows</span></div><div class="stat"><span class="sicon">◷</span><strong id="statSchedules">0</strong><span>Mit GitHub-Zeitplan</span></div><div class="stat"><span class="sicon">↗</span><strong id="statPages">0</strong><span>Repositories mit GitHub Pages</span></div></section>
 <section class="panel"><div class="toolbar"><h2>Gesamtübersicht</h2><span class="tag" id="resultCount"></span></div><div class="controls" style="margin-bottom:16px"><div class="field"><label for="filterAccount">Account</label><select id="filterAccount"><option value="">Alle Accounts</option></select></div><div class="field"><label for="filterPublication">Publikation</label><select id="filterPublication"><option value="all">Alle</option><option value="pages">GitHub Pages gemeldet</option><option value="none">Keine GitHub Pages</option><option value="unknown">Unbekannt</option></select></div><div class="field"><label for="filterType">Workflow</label><select id="filterType"><option value="all">Alle</option><option value="scheduled">Mit Zeitplan</option><option value="unscheduled">Ohne GitHub-Zeitplan</option><option value="failed">Letzter Lauf fehlgeschlagen</option><option value="noworkflow">Ohne Workflow</option></select></div><div class="field grow"><label for="search">Freitext</label><input id="search" placeholder="Account, Repository oder Action …"></div></div>
 
-<div class="wrap"><table><thead><tr><th>Account / Repository</th><th>Workflow / Action</th><th>Auslöser / Rhythmus</th><th>Letzter Lauf</th><th>Status</th><th>Veröffentlicht</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">Bitte einen GitHub-Account hinzufügen.</td></tr></tbody></table></div></section>
-<section class="panel"><h2>Hinweise zur Interpretation</h2><div class="notice">Die Überwachung startet erst nach Klick auf «Abfrage starten». Ein GitHub-Cron wird aus öffentlich lesbaren Workflow-Dateien erkannt. <strong>«Kein GitHub-Zeitplan»</strong> bedeutet nicht zwingend «nie automatisch»: Externe Dienste wie cron-job.org können Workflows über die API starten. Der Rhythmus des externen Dienstes lässt sich daraus nicht zuverlässig ablesen. GitHub Pages wird zuerst am Repository-Merkmal <code>has_pages</code> erkannt; es wird kein Veröffentlichungslink abgefragt. Andere Hosting-Anbieter werden nicht automatisch erkannt.</div><details><summary>Technische Details und Grenzen anzeigen</summary><p class="sub">Die Seite nutzt die öffentliche GitHub REST API. Ein optionaler, lokal gespeicherter Token ermöglicht authentifizierte Leseanfragen. Anonyme Abfragen sind pro Aktualisierung auf 45, authentifizierte auf 300 begrenzt; bei höchstens 10 verbleibenden Anfragen wird gestoppt. Erfolgreich geprüfte Repositories bleiben 12 Stunden lokal gespeichert. Bei grossen Accounts wird die Übersicht schrittweise vervollständigt. Standardmässig können anonyme Abfragen nach etwa 60 Requests pro Stunde und IP begrenzt werden. Mehrere Accounts mit vielen Repositories können dieses Limit erreichen. Vollständige Account-Daten werden 15 Minuten lokal zwischengespeichert. Zeitangaben sind Schweizer Ortszeit. Wenn ein API-Aufruf fehlschlägt, erscheint eine Warnung statt einer erfundenen Statusmeldung. Die Seite führt keine Änderungen auf GitHub durch.</p></details><div class="footer">Nur öffentliche Repositories · Einzelne HTML-Datei · GitHub Pages oder lokal nutzbar · Browser-Speicherung über localStorage · Token wird nicht exportiert · Konfigurationsdateien enthalten nur öffentliche GitHub-Accountnamen.</div></section>
+<div class="wrap"><table><thead><tr><th>Account / Repository</th><th>Workflow / Action</th><th>Auslöser / Rhythmus</th><th>Letzter Lauf</th><th>Letzter Workflow-Status</th><th>Veröffentlicht</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">Bitte einen GitHub-Account hinzufügen.</td></tr></tbody></table></div></section>
+<section class="panel"><h2>Hinweise zur Interpretation</h2><div class="notice">Die Überwachung startet erst nach Klick auf «Abfrage starten». Ein GitHub-Cron wird aus öffentlich lesbaren Workflow-Dateien erkannt. <strong>«Kein GitHub-Zeitplan»</strong> bedeutet nicht zwingend «nie automatisch»: Externe Dienste wie cron-job.org können Workflows über die API starten. Der Rhythmus des externen Dienstes lässt sich daraus nicht zuverlässig ablesen. GitHub Pages wird zuerst am Repository-Merkmal <code>has_pages</code> erkannt; es wird kein Veröffentlichungslink abgefragt. Andere Hosting-Anbieter werden nicht automatisch erkannt.</div><details><summary>Technische Details und Grenzen anzeigen</summary><p class="sub">Die Seite nutzt die öffentliche GitHub REST API. Ein optionaler, lokal gespeicherter Token ermöglicht authentifizierte Leseanfragen. Anonyme Abfragen sind pro Aktualisierung auf 45 begrenzt; bei authentifizierten Abfragen gibt es keine zusätzliche interne Obergrenze. Die tatsächlichen GitHub-Limits gelten weiterhin, bei höchstens 10 verbleibenden Anfragen wird gestoppt. Eine laufende Abfrage kann jederzeit abgebrochen werden. Erfolgreich geprüfte Repositories bleiben 12 Stunden lokal gespeichert. Bei grossen Accounts wird die Übersicht schrittweise vervollständigt. Standardmässig können anonyme Abfragen nach etwa 60 Requests pro Stunde und IP begrenzt werden. Mehrere Accounts mit vielen Repositories können dieses Limit erreichen. Vollständige Account-Daten werden 15 Minuten lokal zwischengespeichert. Zeitangaben sind Schweizer Ortszeit. Wenn ein API-Aufruf fehlschlägt, erscheint eine Warnung statt einer erfundenen Statusmeldung. Die Seite führt keine Änderungen auf GitHub durch.</p></details><div class="footer">Nur öffentliche Repositories · Einzelne HTML-Datei · GitHub Pages oder lokal nutzbar · Browser-Speicherung über localStorage · Token wird nicht exportiert · Konfigurationsdateien enthalten nur öffentliche GitHub-Accountnamen.</div></section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id), API='https://api.github.com', ttl=15*60*1000, configKey='gh-actions-monitor-v3-accounts';
 const validName=/^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
 let accounts=readConfig(), data={repos:[],entries:[],errors:[],loaded:false}, busy=false, seq=0;
-const ANON_LIMIT=45, AUTH_LIMIT=300, RESERVE=10, repoTTL=12*60*60*1000, tokenKey='gh-actions-monitor-local-token';
+const ANON_LIMIT=45, RESERVE=10, repoTTL=12*60*60*1000, tokenKey='gh-actions-monitor-local-token';
 let authToken=readToken(),authConfirmed=false;
+let activeController=null,stopRequested=false;
+class ScanCancelled extends Error {constructor(){super('Abfrage durch Benutzer abgebrochen');this.name='ScanCancelled';}}
+function checkCancelled(){if(stopRequested)throw new ScanCancelled();}
+function setScanning(active){$('refresh').disabled=active;$('cancelScan').classList.toggle('hidden',!active);$('cancelScan').disabled=!active;}
+function cancelScan(){if(!activeController)return;stopRequested=true;activeController.abort();$('cancelScan').disabled=true;msg('Abbruch angefordert – bisherige Ergebnisse werden übernommen …');}
 function readToken(){try{return localStorage.getItem('gh-actions-monitor-local-token')||'';}catch{return '';}}
 function tokenStatus(message){$('tokenState').textContent=message|| (authConfirmed?'Token geprüft · authentifizierte API (bis 5’000 Anfragen pro Stunde).':authToken?'Gespeicherter Token: wird beim nächsten Abruf geprüft.':'Ohne Token: anonymes API-Kontingent.');$('tokenRemove').disabled=!authToken;}
-function softLimit(){return authConfirmed?AUTH_LIMIT:ANON_LIMIT;}
-async function verifyToken(value){const r=await fetch(API+'/rate_limit',{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+value},cache:'no-store'});if(!r.ok)throw new Error('Token-Prüfung fehlgeschlagen (HTTP '+r.status+').');const j=await r.json();const limit=j.resources?.core?.limit;if(!Number.isFinite(limit)||limit<=60)throw new Error('Kein höheres API-Kontingent bestätigt (Limit: '+(limit??'unbekannt')+').');apiBudget.remaining=j.resources.core.remaining;apiBudget.reset=j.resources.core.reset;apiBudget.pausedUntil=0;apiBudget.reason='';return limit;}
+function softLimit(){return authConfirmed?Infinity:ANON_LIMIT;}
+async function verifyToken(value){checkCancelled();const r=await fetch(API+'/rate_limit',{signal:activeController?.signal,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+value},cache:'no-store'});if(!r.ok)throw new Error('Token-Prüfung fehlgeschlagen (HTTP '+r.status+').');const j=await r.json();const limit=j.resources?.core?.limit;if(!Number.isFinite(limit)||limit<=60)throw new Error('Kein höheres API-Kontingent bestätigt (Limit: '+(limit??'unbekannt')+').');apiBudget.remaining=j.resources.core.remaining;apiBudget.reset=j.resources.core.reset;apiBudget.pausedUntil=0;apiBudget.reason='';return limit;}
 async function saveToken(){const value=$('tokenInput').value.trim();if(!/^github_pat_[A-Za-z0-9_]+$/.test(value)){tokenStatus('Bitte einen gültigen GitHub-Token eingeben.');return;}$('tokenSave').disabled=true;tokenStatus('Token wird bei GitHub geprüft …');try{const limit=await verifyToken(value);localStorage.setItem(tokenKey,value);authToken=value;authConfirmed=true;$('tokenInput').value='';tokenStatus('Token geprüft und auf diesem Gerät gespeichert · API-Limit: '+limit+'/Stunde.');budgetDisplay();}catch(e){tokenStatus('Token nicht gespeichert: '+e.message);}finally{$('tokenSave').disabled=false;}}
 function removeToken(){authToken='';authConfirmed=false;try{localStorage.removeItem(tokenKey);}catch{}$('tokenInput').value='';apiBudget={remaining:null,reset:null,usedHere:0,pausedUntil:0,reason:''};tokenStatus('Token entfernt. Der Monitor verwendet wieder anonyme API-Aufrufe.');budgetDisplay();}
 let apiBudget={remaining:null,reset:null,usedHere:0,pausedUntil:0,reason:''};
 class ApiPause extends Error {constructor(message){super(message);this.name='ApiPause';}}
 function budgetDisplay(){const e=$('budgetStatus');if(!e)return;const r=apiBudget.remaining;
- e.textContent=(r===null?'API-Kontingent: unbekannt':'GitHub REST-API: '+r+' verbleibende Anfragen')+' · '+apiBudget.usedHere+' API-Aufrufe dieser Aktualisierung · Maximum '+softLimit()+(apiBudget.reset?' · Reset '+fmtDate(new Date(apiBudget.reset*1000).toISOString()):'')+(apiBudget.pausedUntil>Date.now()?' · PAUSIERT':'');}
+ e.textContent=(r===null?'API-Kontingent: unbekannt':'GitHub REST-API: '+r+' verbleibende Anfragen')+' · '+apiBudget.usedHere+' API-Aufrufe dieser Aktualisierung · '+(authConfirmed?'kein internes Abfragelimit':'Maximum '+ANON_LIMIT)+(apiBudget.reset?' · Reset '+fmtDate(new Date(apiBudget.reset*1000).toISOString()):'')+(apiBudget.pausedUntil>Date.now()?' · PAUSIERT':'');}
 function pause(reason,until=0){apiBudget.reason=reason;apiBudget.pausedUntil=Math.max(until||0,Date.now()+60000);budgetDisplay();throw new ApiPause(reason);}
 function repositoryCacheKey(repo){return 'gh-actions-monitor-v5-repo-'+repo.full.toLowerCase();}
 function getRepoCache(repo){try{const v=JSON.parse(localStorage.getItem(repositoryCacheKey(repo))||'null');return v&&Date.now()-v.time<repoTTL&&v.branch===repo.branch?v:null;}catch{return null;}}
@@ -97,17 +102,18 @@ function resetLocalData(){
 function downloadConfig(){const blob=new Blob([JSON.stringify({format:'github-actions-monitor-accounts',version:1,accounts},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='github-actions-monitor-konfiguration.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);msg('Konfiguration exportiert.');}
 async function importConfig(file){if(!file)return;try{if(file.size>100000)throw Error('Datei ist zu gross.');const parsed=JSON.parse(await file.text());if(parsed.format!=='github-actions-monitor-accounts'||!Array.isArray(parsed.accounts))throw Error('Keine gültige Monitor-Konfiguration.');const next=normalise(parsed.accounts);if(parsed.accounts.length&&next.length===0)throw Error('Keine gültigen Accountnamen gefunden.');accounts=next;save();renderAccounts();clearResults();msg('Accountliste geändert. Zum Abrufen «Abfrage starten» drücken.');}catch(e){msg('Import nicht möglich: '+e.message);}finally{$('importFile').value='';}}
 async function request(url,{allow404=false,text=false}={}){
+  checkCancelled();
   const isAPI=url.startsWith(API);
   if(isAPI){
     if(apiBudget.pausedUntil>Date.now())throw new ApiPause(apiBudget.reason||'API-Abfragen pausiert');
-    if(apiBudget.usedHere>=softLimit())pause('Sicherheitsstopp: höchstens '+softLimit()+' GitHub-API-Anfragen pro Ladevorgang. Beim nächsten Laden wird mit zwischengespeicherten Repositories weitergearbeitet.');
+    if(!authConfirmed&&apiBudget.usedHere>=ANON_LIMIT)pause('Sicherheitsstopp: höchstens '+ANON_LIMIT+' anonyme GitHub-API-Anfragen pro Ladevorgang. Beim nächsten Laden wird mit zwischengespeicherten Repositories weitergearbeitet.');
     if(apiBudget.remaining!==null&&apiBudget.remaining<=RESERVE)pause('Sicherheitsreserve erreicht: nur noch '+apiBudget.remaining+' API-Anfragen verfügbar.');
     apiBudget.usedHere++;
     budgetDisplay();
   }
   let r;
-  try{r=await fetch(url,{headers:isAPI?{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(authConfirmed?{Authorization:'Bearer '+authToken}:{})}:{}});}
-  catch(e){throw new Error('Netzwerkfehler: '+e.message);}
+  try{r=await fetch(url,{signal:activeController?.signal,headers:isAPI?{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(authConfirmed?{Authorization:'Bearer '+authToken}:{})}:{}});}
+  catch(e){if(stopRequested||e.name==='AbortError')throw new ScanCancelled();throw new Error('Netzwerkfehler: '+e.message);}
   if(isAPI){
     const rem=r.headers.get('x-ratelimit-remaining'),reset=r.headers.get('x-ratelimit-reset');
     if(rem!==null&&/^\d+$/.test(rem))apiBudget.remaining=Number(rem);
@@ -126,7 +132,7 @@ async function request(url,{allow404=false,text=false}={}){
     }
     throw new Error(`HTTP ${r.status}${detail?' – '+detail:''}`);
   }
-  try{return text?await r.text():await r.json();}catch(e){throw new Error('Antwort nicht lesbar: '+e.message);}
+  try{return text?await r.text():await r.json();}catch(e){if(stopRequested||e.name==='AbortError')throw new ScanCancelled();throw new Error('Antwort nicht lesbar: '+e.message);}
 }
 function cronsFromYaml(yaml){let lines=yaml.split(/\r?\n/),inSchedule=false,indent=0,out=[];for(let line of lines){if(/^\s*(?:on|"on"|'on')\s*:\s*$/.test(line)){continue;}const m=line.match(/^(\s*)schedule\s*:\s*(?:#.*)?$/);if(m){inSchedule=true;indent=m[1].length;continue;}if(inSchedule){const ci=line.match(/^(\s*)\S/);if(ci&&ci[1].length<=indent){inSchedule=false;continue;}const cron=line.match(/^\s*-?\s*cron\s*:\s*['"]?([^'"#\r\n]+)['"]?/);if(cron)out.push(cron[1].trim());}}return out;}
 function cronLabel(c){const p=c.trim().split(/\s+/);if(p.length!==5)return c;const [m,h,d,mo,w]=p;if(d==='*'&&mo==='*'&&w==='*'){if(/^\*\/\d+$/.test(m)&&h==='*')return `Alle ${m.split('/')[1]} Minuten · ${c}`;if(/^\d+$/.test(m)&&/^\*\/\d+$/.test(h))return `Alle ${h.split('/')[1]} Stunden, Minute ${m} · ${c}`;if(/^\d+$/.test(m)&&h==='*')return `Stündlich, Minute ${m} · ${c}`;if(/^\d+$/.test(m)&&/^\d+$/.test(h))return `Täglich ${h.padStart(2,'0')}:${m.padStart(2,'0')} UTC · ${c}`;}return c+' · UTC (ohne timezone-Angabe)';}
@@ -135,24 +141,27 @@ function cached(user){try{const v=JSON.parse(localStorage.getItem('gh-actions-v3
 function setCache(user,v){try{localStorage.setItem('gh-actions-v3-cache-'+user.toLowerCase(),JSON.stringify({...v,time:Date.now()}));}catch{}}
 function issue(list,area,where,e){list.push({area,where,message:e instanceof Error?e.message:String(e)});}
 async function scan(user,force,token){
+  checkCancelled();
   if(!force){const c=cached(user);if(c&&Array.isArray(c.errors)&&c.errors.length===0)return c;}
   const repositories=[],entries=[],errors=[];const enc=encodeURIComponent;
   let truncated=false;
   for(let page=1;page<=10;page++){
+    checkCancelled();
     let list;
     try{list=await request(`${API}/users/${enc(user)}/repos?type=owner&sort=updated&direction=desc&per_page=100&page=${page}`);}
-    catch(e){if(e instanceof ApiPause){issue(errors,'API-Schutz',user,e);truncated=true;break;}throw e;}
+    catch(e){if(e instanceof ScanCancelled){truncated=true;break;}if(e instanceof ApiPause){issue(errors,'API-Schutz',user,e);truncated=true;break;}throw e;}
     if(!Array.isArray(list))throw Error('Unerwartete Repository-Antwort');
     repositories.push(...list.filter(r=>!r.private).map(r=>({owner:r.owner.login,name:r.name,full:r.full_name,branch:r.default_branch,hasPages:!!r.has_pages,pages:r.has_pages?'yes':'no',pagesUrl:null,pagesDetail:r.has_pages?'Link noch nicht geprüft':'Nicht eingerichtet',html:r.html_url})));
     if(list.length<100)break;
     if(page===10){issue(errors,'Repository-Liste',user,'Mehr als 1000 Repositories – Liste gekürzt');truncated=true;}
   }
   for(let i=0;i<repositories.length;i++){
+    if(stopRequested){truncated=true;break;}
     if(token!==seq)throw Error('Veraltete Abfrage');
     const repo=repositories[i],base=`${API}/repos/${enc(repo.owner)}/${enc(repo.name)}`;
     const old=getRepoCache(repo);
     if(old){repo.pages=old.pages;repo.pagesUrl=old.pagesUrl;repo.pagesDetail=old.pagesDetail;entries.push(...old.entries);continue;}
-    if(apiBudget.pausedUntil>Date.now() || apiBudget.usedHere>=softLimit() || (apiBudget.remaining!==null&&apiBudget.remaining<=RESERVE)){
+    if(apiBudget.pausedUntil>Date.now() || (!authConfirmed&&apiBudget.usedHere>=ANON_LIMIT) || (apiBudget.remaining!==null&&apiBudget.remaining<=RESERVE)){
       issue(errors,'API-Schutz',user,`Teilabfrage gestoppt: ${i} von ${repositories.length} Repositories geprüft bzw. aus dem Cache geladen. Erneut laden, um fortzufahren.`);
       truncated=true;break;
     }
@@ -164,16 +173,18 @@ async function scan(user,force,token){
       const workflows=Array.isArray(wf.workflows)?wf.workflows:[];
       if(wf.total_count>100)issue(repoErrors,'Workflows',repo.full,'Mehr als 100 Workflows – Liste gekürzt');
       for(const flow of workflows){
+        checkCancelled();
         let sched=[],yamlError=false;
         const sys=!String(flow.path||'').startsWith('.github/workflows/');
-        if(!sys){try{const path=flow.path.split('/').map(enc).join('/');const y=await request(`https://raw.githubusercontent.com/${enc(repo.owner)}/${enc(repo.name)}/${enc(repo.branch||'main')}/${path}`,{text:true});sched=cronsFromYaml(y);}catch(e){yamlError=true;issue(repoErrors,'Workflow-Datei',repo.full+' / '+flow.name,e);}}
+        if(!sys){try{const path=flow.path.split('/').map(enc).join('/');const y=await request(`https://raw.githubusercontent.com/${enc(repo.owner)}/${enc(repo.name)}/${enc(repo.branch||'main')}/${path}`,{text:true});sched=cronsFromYaml(y);}catch(e){if(e instanceof ScanCancelled)throw e;yamlError=true;issue(repoErrors,'Workflow-Datei',repo.full+' / '+flow.name,e);}}
         let run=null,runError=false;
         try{const recent=await request(base+'/actions/workflows/'+flow.id+'/runs?per_page=1');run=recent.workflow_runs?.[0]||null;}
-        catch(e){if(e instanceof ApiPause)throw e;runError=true;issue(repoErrors,'Letzter Lauf',repo.full+' / '+flow.name,e);}
+        catch(e){if(e instanceof ApiPause||e instanceof ScanCancelled)throw e;runError=true;issue(repoErrors,'Letzter Lauf',repo.full+' / '+flow.name,e);}
         repoEntries.push({owner:repo.owner,repo:repo.name,workflow:flow.name,id:flow.id,path:flow.path,url:flow.html_url||repo.html+'/actions',state:flow.state,scheduled:sched,system:sys,yamlError,run,runError,pages:repo.pages,pagesUrl:repo.pagesUrl});
       }
     }catch(e){
-      if(e instanceof ApiPause){issue(errors,'API-Schutz',repo.full,e);truncated=true;break;}
+      if(e instanceof ScanCancelled){entries.push(...repoEntries);truncated=true;break;}
+      if(e instanceof ApiPause){entries.push(...repoEntries);issue(errors,'API-Schutz',repo.full,e);truncated=true;break;}
       issue(repoErrors,'Workflows',repo.full,e);
     }
     entries.push(...repoEntries);errors.push(...repoErrors);
@@ -237,28 +248,57 @@ function render(){
   }).join('');
 }
 async function load(force=false){
-  const intendedToken=authToken;
-  if(intendedToken&&!authConfirmed){try{const limit=await verifyToken(intendedToken);if(authToken!==intendedToken)return;authConfirmed=true;tokenStatus('Gespeicherter Token geprüft · API-Limit: '+limit+'/Stunde.');}catch(e){if(authToken!==intendedToken)return;authConfirmed=false;tokenStatus('Gespeicherter Token nicht verwendbar; anonymer Modus: '+e.message);}}
-  apiBudget.usedHere=0;
-  if(apiBudget.pausedUntil<=Date.now())apiBudget.pausedUntil=0;
-  budgetDisplay();
+  if(activeController)return;
+  stopRequested=false;
+  activeController=new AbortController();
+  setScanning(true);
+  $('loading').classList.add('on');
   const token=++seq,users=accounts.filter(a=>a.enabled).map(a=>a.name);
-  data={repos:[],entries:[],errors:[],loaded:false,users:users.length};render();
-  if(!users.length){msg('Hier Deinen Account eingeben und hinzufügen, um zu starten.');$('loading').classList.remove('on');$('refresh').disabled=false;return;}
-  $('loading').classList.add('on');$('refresh').disabled=true;
   const repos=[],entries=[],errors=[];
-  for(let i=0;i<users.length;i++){
+  let cancelled=false;
+  try{
+    const intendedToken=authToken;
+    if(intendedToken&&!authConfirmed){
+      try{const limit=await verifyToken(intendedToken);checkCancelled();if(authToken!==intendedToken)return;authConfirmed=true;tokenStatus('Gespeicherter Token geprüft · API-Limit: '+limit+'/Stunde.');}
+      catch(e){if(e instanceof ScanCancelled)throw e;if(authToken!==intendedToken)return;authConfirmed=false;tokenStatus('Gespeicherter Token nicht verwendbar; anonymer Modus: '+e.message);}
+    }
+    checkCancelled();
+    apiBudget.usedHere=0;
+    if(apiBudget.pausedUntil<=Date.now())apiBudget.pausedUntil=0;
+    budgetDisplay();
+    data={repos:[],entries:[],errors:[],loaded:false,users:users.length};render();
+    if(!users.length){msg('Hier Deinen Account eingeben und hinzufügen, um zu starten.');return;}
+    for(let i=0;i<users.length;i++){
+      if(token!==seq)return;
+      if(stopRequested){cancelled=true;break;}
+      try{
+        msg('Account '+(i+1)+'/'+users.length+': '+users[i]);
+        const result=await scan(users[i],force,token);
+        repos.push(...result.repositories);entries.push(...result.entries);errors.push(...result.errors);
+        if(stopRequested){cancelled=true;break;}
+        if(apiBudget.pausedUntil>Date.now())break;
+      }catch(e){
+        if(token!==seq)return;
+        if(e instanceof ScanCancelled){cancelled=true;break;}
+        issue(errors,'Account',users[i],e);
+        if(e instanceof ApiPause)break;
+      }
+    }
     if(token!==seq)return;
-    try{msg('Account '+(i+1)+'/'+users.length+': '+users[i]);const result=await scan(users[i],force,token);repos.push(...result.repositories);entries.push(...result.entries);errors.push(...result.errors);if(apiBudget.pausedUntil>Date.now())break;}
-    catch(e){if(token!==seq)return;issue(errors,'Account',users[i],e);if(e instanceof ApiPause)break;}
+    if(cancelled||stopRequested)errors.push({area:'Abbruch',where:'Benutzer',message:'Abfrage manuell abgebrochen. Ergebnisse sind möglicherweise unvollständig.'});
+    data={repos,entries,errors,loaded:true,users:users.length,timestamp:new Date().toISOString()};render();
+    budgetDisplay();
+    msg(cancelled||stopRequested?`Abgebrochen: ${repos.length} Repositories erfasst. Bisherige Ergebnisse bleiben sichtbar.`:errors.length?`Teilweise geladen: ${repos.length} öffentliche Repositories gefunden. ${errors.length} Abrufhinweis(e) – Details unten aufklappen.`:`Fertig: ${repos.length} öffentliche Repositories aus ${users.length} Account(s).`);
+  }catch(e){
+    if(e instanceof ScanCancelled){msg('Abfrage abgebrochen. Es wurden keine weiteren API-Anfragen gestartet.');}
+    else{msg('Abfragefehler: '+e.message);}
+  }finally{
+    activeController=null;stopRequested=false;
+    setScanning(false);
+    $('loading').classList.remove('on');
   }
-  if(token!==seq)return;
-  budgetDisplay();
-  data={repos,entries,errors,loaded:true,users:users.length,timestamp:new Date().toISOString()};render();
-  $('loading').classList.remove('on');$('refresh').disabled=false;
-  msg(errors.length?`Teilweise geladen: ${repos.length} öffentliche Repositories gefunden. ${errors.length} Abrufhinweis(e) – Details unten aufklappen.`:`Fertig: ${repos.length} öffentliche Repositories aus ${users.length} Account(s).`);
 }
-$('tokenHelpBtn').addEventListener('click',()=>{const e=$('tokenHelp'),visible=e.classList.toggle('hidden');$('tokenHelpBtn').setAttribute('aria-expanded',String(!visible));});$('tokenSave').addEventListener('click',saveToken);$('tokenRemove').addEventListener('click',removeToken);tokenStatus();$('resetLocal').addEventListener('click',resetLocalData);$('addUser').addEventListener('click',addAccount);$('newUser').addEventListener('keydown',e=>{if(e.key==='Enter')addAccount();});$('refresh').addEventListener('click',()=>load(false));$('export').addEventListener('click',downloadConfig);$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',e=>importConfig(e.target.files?.[0]));['filterAccount','filterPublication','filterType'].forEach(id=>$(id).addEventListener('change',render));$('search').addEventListener('input',render);renderAccounts();render();msg('Bereit. Account auswählen und «Abfrage starten» drücken.');
+$('tokenHelpBtn').addEventListener('click',()=>{const e=$('tokenHelp'),visible=e.classList.toggle('hidden');$('tokenHelpBtn').setAttribute('aria-expanded',String(!visible));});$('tokenSave').addEventListener('click',saveToken);$('tokenRemove').addEventListener('click',removeToken);tokenStatus();$('resetLocal').addEventListener('click',resetLocalData);$('addUser').addEventListener('click',addAccount);$('newUser').addEventListener('keydown',e=>{if(e.key==='Enter')addAccount();});$('refresh').addEventListener('click',()=>load(false));$('cancelScan').addEventListener('click',cancelScan);$('export').addEventListener('click',downloadConfig);$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',e=>importConfig(e.target.files?.[0]));['filterAccount','filterPublication','filterType'].forEach(id=>$(id).addEventListener('change',render));$('search').addEventListener('input',render);renderAccounts();render();msg('Bereit. Account auswählen und «Abfrage starten» drücken.');
 
 function syncThemeButton(){const dark=document.documentElement.dataset.theme==='dark';$('themeLabel').textContent=dark?'Hell':'Dunkel';$('themeToggle').setAttribute('aria-label',dark?'Helles Design aktivieren':'Dunkles Design aktivieren');document.querySelector('meta[name="theme-color"]').content=dark?'#171b1d':'#f5f6f4';}
 $('themeToggle').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('gh-actions-monitor-theme',next)}catch{}syncThemeButton();});
